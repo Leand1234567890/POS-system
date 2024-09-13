@@ -285,7 +285,7 @@ public class userInterface extends javax.swing.JFrame {
                 double price = rs.getDouble("Price");
                 double discount = rs.getDouble("Discount");
 
-                // Calculate the price after applying discount (if any)
+                // Calculate the price after applying discount 
                 double discountAmount = (discount > 0) ? price * (discount / 100) : 0;
                 double finalPrice = price - discountAmount;
                 double totalItemPrice = finalPrice * quantity;
