@@ -14,5 +14,6 @@ public class PosLogic {
                 new titleForm().setVisible(true);
             }
         });
+        
     }
 }
