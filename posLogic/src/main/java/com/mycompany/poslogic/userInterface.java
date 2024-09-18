@@ -228,21 +228,21 @@ public class userInterface extends javax.swing.JFrame {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {                                         
         // Display database button:
         try (Connection conn = DriverManager.getConnection("jdbc:sqlite:pos.db");
-        Statement stmt = conn.createStatement()) {
+            Statement stmt = conn.createStatement()) {
 
-        String selectQuery = "SELECT * FROM Products";
-        ResultSet rs = stmt.executeQuery(selectQuery);
+            String selectQuery = "SELECT * FROM Products";
+            ResultSet rs = stmt.executeQuery(selectQuery);
 
-        StringBuilder result = new StringBuilder("Product List:\n");
-        while (rs.next()) {
-            result.append("ID: ").append(rs.getInt("ProductID"))
-                  .append(", Name: ").append(rs.getString("ProductName"))
-                  .append(", Price: ").append(rs.getDouble("Price"))
-                  .append(", Stock: ").append(rs.getInt("StockQuantity"))
-                  .append("\n");
-        }
+            StringBuilder result = new StringBuilder("Product List:\n");
+            while (rs.next()) {
+                result.append("ID: ").append(rs.getInt("ProductID"))
+                      .append(", Name: ").append(rs.getString("ProductName"))
+                      .append(", Price: ").append(rs.getDouble("Price"))
+                      .append(", Stock: ").append(rs.getInt("StockQuantity"))
+                      .append("\n");
+            }
 
-        JOptionPane.showMessageDialog(null, result.toString());
+            JOptionPane.showMessageDialog(null, result.toString());
 
         } catch (SQLException e) {
             e.printStackTrace();
