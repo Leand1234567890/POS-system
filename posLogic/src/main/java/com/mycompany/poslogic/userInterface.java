@@ -192,7 +192,7 @@ public class userInterface extends javax.swing.JFrame {
         int stock = Integer.parseInt(JOptionPane.showInputDialog("Enter Stock Quantity:"));
 
         try (Connection conn = DriverManager.getConnection("jdbc:sqlite:pos.db");
-             Statement stmt = conn.createStatement()) {
+            Statement stmt = conn.createStatement()) {
 
             String insertQuery = "INSERT INTO Products (ProductName, Category, Price, StockQuantity) "
                                + "VALUES ('" + productName + "', '" + category + "', " + price + ", " + stock + ");";
@@ -212,7 +212,7 @@ public class userInterface extends javax.swing.JFrame {
         int newStock = Integer.parseInt(JOptionPane.showInputDialog("Enter New Stock Quantity:"));
 
         try (Connection conn = DriverManager.getConnection("jdbc:sqlite:pos.db");
-             Statement stmt = conn.createStatement()) {
+            Statement stmt = conn.createStatement()) {
 
             String updateQuery = "UPDATE Products SET ProductName = '" + newProductName + "', "
                                + "Price = " + newPrice + ", StockQuantity = " + newStock 
@@ -228,7 +228,7 @@ public class userInterface extends javax.swing.JFrame {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {                                         
         // Display database button:
         try (Connection conn = DriverManager.getConnection("jdbc:sqlite:pos.db");
-         Statement stmt = conn.createStatement()) {
+        Statement stmt = conn.createStatement()) {
 
         String selectQuery = "SELECT * FROM Products";
         ResultSet rs = stmt.executeQuery(selectQuery);
@@ -324,15 +324,15 @@ public class userInterface extends javax.swing.JFrame {
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {                                         
         // Total income button:
         try (Connection conn = DriverManager.getConnection("jdbc:sqlite:pos.db");
-         Statement stmt = conn.createStatement()) {
+            Statement stmt = conn.createStatement()) {
 
-        String totalIncomeQuery = "SELECT SUM(TotalAmount) AS TotalIncome FROM Orders";
-        ResultSet rs = stmt.executeQuery(totalIncomeQuery);
+            String totalIncomeQuery = "SELECT SUM(TotalAmount) AS TotalIncome FROM Orders";
+            ResultSet rs = stmt.executeQuery(totalIncomeQuery);
 
-        if (rs.next()) {
-            double totalIncome = rs.getDouble("TotalIncome");
-            JOptionPane.showMessageDialog(null, "Total Income: R" + totalIncome);
-        }
+            if (rs.next()) {
+                double totalIncome = rs.getDouble("TotalIncome");
+                JOptionPane.showMessageDialog(null, "Total Income: R" + totalIncome);
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -350,10 +350,10 @@ public class userInterface extends javax.swing.JFrame {
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {                                         
         // Card Payment button:
         double totalAmount = Double.parseDouble(jTextField2.getText());  // Assuming the total price with VAT is in jTextField2
-    String cardNumber = JOptionPane.showInputDialog("Enter Card Number:");
+        String cardNumber = JOptionPane.showInputDialog("Enter Card Number:");
 
-    // Logic to process the card payment could be added here (e.g., through a payment gateway API)
-    JOptionPane.showMessageDialog(null, "Payment of R" + totalAmount + " made via card ending in " + cardNumber.substring(cardNumber.length() - 4));
+        // Logic to process the card payment could be added here (e.g., through a payment gateway API)
+        JOptionPane.showMessageDialog(null, "Payment of R" + totalAmount + " made via card ending in " + cardNumber.substring(cardNumber.length() - 4));
     }                                        
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {                                         
