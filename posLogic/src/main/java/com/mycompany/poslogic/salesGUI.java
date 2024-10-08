@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import javax.swing.JFrame;
@@ -36,17 +37,7 @@ public class salesGUI extends javax.swing.JFrame {
         retrieveDataFromDatabase();
         retrieveCashCreditTotals();
     }
-    
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//slips 
-   // public String ReceiptFormat(int salesId, String salesDate,double totalAmount, double product_price){
-   // return  "ELSBURG SUPERMARKET"+"\n" +
-           // "--------------------------"+ "\n" +
-           // "----------------------"+ "\n" +
-           // "Sales ID:" + salesId + "" + "" + "" + "R" + product_price + "\n" +
-            
-           // }
-   
+     
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
 private void retrieveDataFromDatabase() {
     // Set the column names
@@ -59,8 +50,8 @@ private void retrieveDataFromDatabase() {
     // SQLite database connection details
     String url = "jdbc:sqlite:C:/Users/Leandro/Desktop/POS-system/dataBasePos.db"; // Your actual SQLite database path
     
-    String query = "SELECT s.sales_id, s.sales_date, p.amount, p.payment_method "
-                 + "FROM sales s JOIN payment p ON s.sales_id = p.sales_id";
+    String query = "SELECT sales_id, sales_date, total_amount, payment_method FROM sales";
+              
     
     // Establish the database connection and retrieve data
     try (Connection conn = DriverManager.getConnection(url);
@@ -73,7 +64,7 @@ private void retrieveDataFromDatabase() {
             String salesId = rs.getString("sales_id");
             String saleDate = rs.getString("sales_date");
             String paymentMethod = rs.getString("payment_method");
-            String amount = String.valueOf(rs.getDouble("amount"));
+            String amount = String.valueOf(rs.getDouble("total_amount"));
             
 
             // Add the data to the table model
@@ -96,9 +87,9 @@ private void retrieveCashCreditTotals() {
     
     // SQL query for cash and credit totals
     String query = "SELECT "
-                 + "(SELECT SUM(amount) FROM payment WHERE payment_method = 'Cash') AS cashTotal, "
-                 + "(SELECT SUM(amount) FROM payment WHERE payment_method = 'Card') AS creditTotal,"
-                 + "(SELECT SUM(amount) FROM payment) AS totalAmount";
+                 + "(SELECT SUM(total_amount) FROM sales WHERE payment_method = 'cash') AS cashTotal, "
+                 + "(SELECT SUM(total_amount) FROM sales WHERE payment_method = 'card') AS creditTotal,"
+                 + "(SELECT SUM(total_amount) FROM sales) AS totalAmount";
     
     try (Connection conn = DriverManager.getConnection("jdbc:sqlite:C:/Users/Leandro/Desktop/POS-system/dataBasePos.db");
          Statement stmt = conn.createStatement();
@@ -146,9 +137,9 @@ private void exportDataToFiles() {
 private void exportSalesData(File directory, String date) {
     String url = "jdbc:sqlite:C:/Users/Leandro/Desktop/POS-system/dataBasePos.db";
     String query = "SELECT "
-                 + "(SELECT SUM(amount) FROM payment WHERE payment_method = 'Cash') AS cashTotal, "
-                 + "(SELECT SUM(amount) FROM payment WHERE payment_method = 'Card') AS creditTotal, "
-                 + "(SELECT SUM(amount) FROM payment) AS totalAmount";
+                 + "(SELECT SUM(total_amount) FROM sales WHERE payment_method = 'cash') AS cashTotal, "
+                 + "(SELECT SUM(total_amount) FROM sales WHERE payment_method = 'card') AS creditTotal, "
+                 + "(SELECT SUM(total_amount) FROM sales) AS totalAmount";
 
     try (Connection conn = DriverManager.getConnection(url);
          Statement stmt = conn.createStatement();
@@ -181,35 +172,55 @@ private void exportSalesData(File directory, String date) {
 }
 private void exportPaymentData(File directory, String date) {
     String url = "jdbc:sqlite:C:/Users/Leandro/Desktop/POS-system/dataBasePos.db";
-    String query = "SELECT * FROM payment";
+    String query = "SELECT sales_id, sales_date, total_amount, payment_method FROM sales";
 
     try (Connection conn = DriverManager.getConnection(url);
          Statement stmt = conn.createStatement();
          ResultSet rs = stmt.executeQuery(query);
          BufferedWriter writer = new BufferedWriter(new FileWriter(new File(directory, "PaymentData_" + date + ".txt")))) {
 
-        writer.write(String.format("%-12s | %-10s | %-10s | %-10s | %-15s%n", "Payment ID", "Sales ID", "Amount", "Date", "Payment Method"));
+        writer.write(String.format("%-12s | %-10s | %-10s | %-15s%n", "Sales ID", "Sales Date", "Amount", "Payment Method"));
         writer.write("-----------------------------------------------------------------\n");
         
         // Write data
         while (rs.next()) {
-            writer.write(String.format("%-12d | %-10d | %-10.2f | %-10s | %-15s%n", 
-                rs.getInt("payment_id"), 
+            writer.write(String.format("%-12d | %-10s | %-10.2f | %-15s%n",  
                 rs.getInt("sales_id"), 
-                rs.getDouble("amount"), 
-                rs.getString("date"), 
+                rs.getString("sales_date"), 
+                rs.getDouble("total_amount"), 
                 rs.getString("payment_method")));
         }
         
         writer.write("-----------------------------------------------------------------\n");
         System.out.println("Payment data exported to " + directory.getName() + "/PaymentData_" + date + ".txt");
-         JOptionPane.showMessageDialog(null, "Payment data exported successfully to " + directory.getName() +  date + ".txt", 
+        JOptionPane.showMessageDialog(null, "Payment data exported successfully to " + directory.getName() +  date + ".txt", 
                                       "Export Successful", JOptionPane.INFORMATION_MESSAGE);
     } catch (SQLException | IOException e) {
         e.printStackTrace();
-    }
+        JOptionPane.showMessageDialog(null, "SQL Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    } 
 }
 
+
+    //Method to delete all the data in sales
+    public void deleteSales(){
+        try(Connection conn = DriverManager.getConnection("jdbc:sqlite:C:/Users/Leandro/Desktop/POS-system/dataBasePos.db")){
+            String query = "DELETE FROM sales";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.executeUpdate();
+            
+            String resetQuery = "DELETE FROM sqlite_sequence WHERE name='sales'";
+            PreparedStatement resetStmt = conn.prepareStatement(resetQuery);
+            resetStmt.executeUpdate();
+            
+            stmt.close();
+            resetStmt.close();
+            
+        }catch(SQLException ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error clearing the sales table!", "Error", JOptionPane.ERROR_MESSAGE);
+        }  
+    }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /**
@@ -230,6 +241,8 @@ private void exportPaymentData(File directory, String date) {
         jTable2 = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         exportFiles = new javax.swing.JButton();
+        clearDataBase = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -251,7 +264,7 @@ private void exportPaymentData(File directory, String date) {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(35, 35, 35)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(1028, Short.MAX_VALUE))
+                .addContainerGap(1039, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -267,6 +280,7 @@ private void exportPaymentData(File directory, String date) {
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jTable1.setBackground(new java.awt.Color(255, 255, 255));
+        jTable1.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         jTable1.setForeground(new java.awt.Color(0, 0, 0));
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -276,20 +290,21 @@ private void exportPaymentData(File directory, String date) {
 
             }
         ));
+        jTable1.setSelectionBackground(new java.awt.Color(0, 102, 255));
         jScrollPane1.setViewportView(jTable1);
 
-        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 60, 720, 310));
+        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 60, 810, 340));
 
         jTable2.setBackground(new java.awt.Color(255, 255, 255));
         jTable2.setForeground(new java.awt.Color(0, 0, 0));
         jScrollPane2.setViewportView(jTable2);
 
-        jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 390, 350, 70));
+        jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 410, 350, 50));
 
         jLabel1.setFont(new java.awt.Font("Bahnschrift", 1, 14)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("Export daily totals and daily sales as file");
-        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 100, -1, -1));
+        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 100, -1, -1));
 
         exportFiles.setText("Export sales and totals");
         exportFiles.addActionListener(new java.awt.event.ActionListener() {
@@ -297,7 +312,24 @@ private void exportPaymentData(File directory, String date) {
                 exportFilesActionPerformed(evt);
             }
         });
-        jPanel2.add(exportFiles, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 140, -1, -1));
+        jPanel2.add(exportFiles, new org.netbeans.lib.awtextra.AbsoluteConstraints(980, 150, -1, -1));
+
+        clearDataBase.setBackground(new java.awt.Color(0, 102, 255));
+        clearDataBase.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        clearDataBase.setForeground(new java.awt.Color(0, 0, 0));
+        clearDataBase.setText("Clear data base");
+        clearDataBase.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearDataBaseActionPerformed(evt);
+            }
+        });
+        jPanel2.add(clearDataBase, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 310, -1, -1));
+
+        jLabel2.setBackground(new java.awt.Color(51, 102, 255));
+        jLabel2.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel2.setText("Clear data base");
+        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(980, 280, 130, -1));
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
 
@@ -306,7 +338,7 @@ private void exportPaymentData(File directory, String date) {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        userInterface UserInterface = new userInterface();
+        SalesGuii UserInterface = new SalesGuii();
         UserInterface.setVisible(true);
         dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -315,6 +347,26 @@ private void exportPaymentData(File directory, String date) {
         // TODO add your handling code here:
         exportDataToFiles();
     }//GEN-LAST:event_exportFilesActionPerformed
+
+    private void clearDataBaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearDataBaseActionPerformed
+        // TODO add your handling code here:
+        LocalTime currentTime =LocalTime.now();
+        LocalTime earlyTime = LocalTime.of(18,0);
+        if(currentTime.isBefore(earlyTime)){
+           int confirm = JOptionPane.showConfirmDialog(null,"Are you sure you want to remove all data from the sales table? ",
+                   "Confirm Delete", JOptionPane.YES_NO_OPTION);
+           if (confirm == JOptionPane.YES_OPTION){
+                deleteSales();
+                JOptionPane.showMessageDialog(null, "Sales data cleared successfully!");
+           }else{
+                deleteSales();
+                JOptionPane.showMessageDialog(null, "Sales data cleared successfully!");
+           }
+        }
+        retrieveDataFromDatabase();
+        retrieveCashCreditTotals();
+        
+    }//GEN-LAST:event_clearDataBaseActionPerformed
 
     /**
      * @param args the command line arguments
@@ -352,9 +404,11 @@ private void exportPaymentData(File directory, String date) {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton clearDataBase;
     private javax.swing.JButton exportFiles;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;

@@ -4,7 +4,14 @@
  */
 package com.mycompany.poslogic;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -16,15 +23,113 @@ import javax.swing.table.DefaultTableModel;
  */
 public class SalesGuii extends javax.swing.JFrame {
 
+    
     /**
      * Creates new form SalesGuii
      */
     public SalesGuii() {
         initComponents();
-        initComponents();
         setExtendedState(JFrame.MAXIMIZED_BOTH);
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                barcodeInputAction(evt);
+            }
+        });
+    }
+    
+    //Method to handle barcode entry
+    private void barcodeInputAction(java.awt.event.ActionEvent evt){
+        String barcode =jTextField1.getText();
+        if (barcode.isEmpty()){
+            JOptionPane.showMessageDialog(this, "Please enter a barcode.");
+            return;
+        }
+        fetchProductFromDatabase(barcode);
+        jTextField1.setText("");
     }
 
+    //Method to fetch product from databse
+    private void fetchProductFromDatabase(String barcode){
+        try(Connection conn = DriverManager.getConnection("jdbc:sqlite:C:/Users/Leandro/Desktop/POS-system/dataBasePos.db")){
+            String query = "SELECT product_name, product_price FROM products WHERE barcode = ?";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, barcode);
+            ResultSet rs = stmt.executeQuery();
+        
+        if (rs.next()){
+            String productName =rs.getString("product_name");
+            double productPrice =rs.getDouble("product_price");
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            double total = calculateTotal(); 
+            model.addRow(new Object[]{productName, productPrice});
+            updateTotalTable();
+            
+        }else{
+            JOptionPane.showMessageDialog(this, "Product not found. Please enter manually.");
+            jTextField2.setText("Enter price manually");
+            }
+        }catch(SQLException ex){
+            JOptionPane.showMessageDialog(this, "Error accessing database: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+    
+    //method to add products manually
+    private void addProductsManually(){
+    String productName = JOptionPane.showInputDialog("Enter product name:");
+    String productPrice = jTextField2.getText();
+    
+    if (productName != null && !productPrice.isEmpty()) {
+        double productPriceDouble = Double.parseDouble(productPrice); 
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.addRow(new Object[]{productName, productPriceDouble});
+        updateTotalTable();
+        jTextField1.setText("");
+        jTextField2.setText(""); 
+    } else {
+        JOptionPane.showMessageDialog(this, "Please enter a valid product name and price.");
+    }
+    }
+    
+    //Method to calculate the total
+    private double calculateTotal() {
+    double total = 0;
+    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+    
+    for (int i = 0; i < model.getRowCount(); i++) {
+        Object priceObj = model.getValueAt(i, 1); 
+        if (priceObj != null) {
+            total += Double.parseDouble(priceObj.toString()); 
+        }
+    }
+    return total; 
+}
+    
+    //Method to update total table
+    private void updateTotalTable(){
+    double total = calculateTotal();
+    DefaultTableModel totalModel = (DefaultTableModel) jTable2.getModel();
+    totalModel.setRowCount(0);
+    totalModel.addRow(new Object[]{total}); 
+    }
+    
+    //Method to save the transactions into the database
+    private void saveTransactionCash(String paymentType, double totalAmount){
+    String salesSql = "INSERT INTO sales(sales_date, total_amount, payment_method) VALUES(?,?,?)";
+    String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+    
+    try(Connection conn = DriverManager.getConnection("jdbc:sqlite:C:/Users/Leandro/Desktop/POS-system/dataBasePos.db")){
+    PreparedStatement stmt = conn.prepareStatement(salesSql);
+    stmt.setString(1, currentDate); 
+    stmt.setDouble(2, totalAmount);
+    stmt.setString(3, paymentType);
+    stmt.executeUpdate();
+    JOptionPane.showMessageDialog(this, "Transaction saved successfully.");
+    }catch(SQLException ex){
+    JOptionPane.showMessageDialog(this, "Error saving transactions" + ex.getMessage());
+     ex.printStackTrace();
+    }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -35,63 +140,35 @@ public class SalesGuii extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
+        Sales = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jTextField1 = new javax.swing.JTextField();
-        jButton7 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
         jTextField2 = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(0, 102, 255));
 
-        jButton1.setText("jButton1");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        jButton2.setText("jButton2");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
-        jButton3.setText("jButton3");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
-            }
-        });
-
-        jButton4.setText("jButton4");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
-            }
-        });
-
-        jButton5.setText("jButton5");
+        jButton5.setText("EXIT");
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton5ActionPerformed(evt);
             }
         });
 
-        jButton6.setText("jButton6");
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
+        Sales.setText("Sales");
+        Sales.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
+                SalesActionPerformed(evt);
             }
         });
 
@@ -100,32 +177,20 @@ public class SalesGuii extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(45, 45, 45)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(259, 259, 259)
-                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(34, 34, 34)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(50, 50, 50)
-                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(42, 42, 42)
+                .addGap(30, 30, 30)
                 .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(68, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(Sales, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(26, 26, 26))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(33, 33, 33)
+                .addGap(35, 35, 35)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3)
-                    .addComponent(jButton4)
                     .addComponent(jButton5)
-                    .addComponent(jButton6))
-                .addContainerGap(42, Short.MAX_VALUE))
+                    .addComponent(Sales))
+                .addContainerGap(40, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
@@ -133,79 +198,118 @@ public class SalesGuii extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Product Name", "Product Price"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
-        jTextField1.setText("jTextField1");
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        jButton1.setText("Manual");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                jButton1ActionPerformed(evt);
             }
         });
 
-        jButton7.setText("jButton7");
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Total"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(jTable2);
+
+        jButton2.setText("Clear all ");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
+                jButton2ActionPerformed(evt);
             }
         });
 
-        jButton8.setText("jButton8");
-        jButton8.addActionListener(new java.awt.event.ActionListener() {
+        jButton3.setText("Cash");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton8ActionPerformed(evt);
+                jButton3ActionPerformed(evt);
             }
         });
 
-        jTextField2.setText("jTextField2");
+        jButton4.setText("Card");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(25, 25, 25)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(82, 82, 82)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(75, 75, 75)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(56, 56, 56)
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(137, 137, 137)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(153, 153, 153)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 595, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 384, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 384, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(156, 156, 156))))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(130, 130, 130)))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(29, 29, 29)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(63, 63, 63)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(32, 32, 32)
+                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(45, 45, 45)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton7)))
-                .addGap(18, 18, 18)
-                .addComponent(jButton8)
-                .addContainerGap(33, Short.MAX_VALUE))
+                        .addGap(59, 59, 59)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(38, 38, 38)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(31, 31, 31)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton4)
+                    .addComponent(jButton3))
+                .addContainerGap(104, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -226,209 +330,67 @@ public class SalesGuii extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        addProductsManually();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0);
+        updateTotalTable();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        String input = JOptionPane.showInputDialog(null, "Enter amount of cash given:");
+        if(input != null && !input.isEmpty())
+        try{
+            double cashGiven = Double.parseDouble(input);
+            double totalAmount = calculateTotal();
+            double change = cashGiven - totalAmount;
+            if (change<0 ){
+                JOptionPane.showMessageDialog(null, "Insuffficient cash the customer needs to pay more");
+            }else{
+                JOptionPane.showMessageDialog(null, "cahnge: " + change);
+                saveTransactionCash("cash", totalAmount);
+            }
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            DefaultTableModel model2 = (DefaultTableModel) jTable2.getModel();
+            model.setRowCount(0);
+            model2.setRowCount(0);
+            updateTotalTable();
+        }catch(NumberFormatException e){
+            JOptionPane.showMessageDialog(null,"please enter a valid number");
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
+
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        String productName = JOptionPane.showInputDialog("Enter Product Name:");
-        String category = JOptionPane.showInputDialog("Enter Product Category:");
-        double price = Double.parseDouble(JOptionPane.showInputDialog("Enter Product Price:"));
-        int stock = Integer.parseInt(JOptionPane.showInputDialog("Enter Stock Quantity:"));
-
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:pos.db");
-             Statement stmt = conn.createStatement()) {
-
-            String insertQuery = "INSERT INTO Products (ProductName, Category, Price, StockQuantity) "
-                               + "VALUES ('" + productName + "', '" + category + "', " + price + ", " + stock + ");";
-            stmt.executeUpdate(insertQuery);
-            JOptionPane.showMessageDialog(null, "Product Added Successfully!");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        double totalAmount = calculateTotal();
+        saveTransactionCash("card", totalAmount);
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel model2 = (DefaultTableModel) jTable2.getModel();
+        model.setRowCount(0);
+        model2.setRowCount(0);
+        updateTotalTable();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
-        //Edit database button:
-        int productId = Integer.parseInt(JOptionPane.showInputDialog("Enter Product ID to Edit:"));
-        String newProductName = JOptionPane.showInputDialog("Enter New Product Name:");
-        double newPrice = Double.parseDouble(JOptionPane.showInputDialog("Enter New Price:"));
-        int newStock = Integer.parseInt(JOptionPane.showInputDialog("Enter New Stock Quantity:"));
-
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:pos.db");
-             Statement stmt = conn.createStatement()) {
-
-            String updateQuery = "UPDATE Products SET ProductName = '" + newProductName + "', "
-                               + "Price = " + newPrice + ", StockQuantity = " + newStock 
-                               + " WHERE ProductID = " + productId;
-            stmt.executeUpdate(updateQuery);
-            JOptionPane.showMessageDialog(null, "Product Updated Successfully!");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
+        titleForm Title = new titleForm();
+        Title.setVisible(true);
+        dispose();
     }//GEN-LAST:event_jButton5ActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void SalesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SalesActionPerformed
         // TODO add your handling code here:
-        // Display database button:
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:pos.db");
-         Statement stmt = conn.createStatement()) {
-
-        String selectQuery = "SELECT * FROM Products";
-        ResultSet rs = stmt.executeQuery(selectQuery);
-
-        StringBuilder result = new StringBuilder("Product List:\n");
-        while (rs.next()) {
-            result.append("ID: ").append(rs.getInt("ProductID"))
-                  .append(", Name: ").append(rs.getString("ProductName"))
-                  .append(", Price: ").append(rs.getDouble("Price"))
-                  .append(", Stock: ").append(rs.getInt("StockQuantity"))
-                  .append("\n");
-        }
-
-        JOptionPane.showMessageDialog(null, result.toString());
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-    }//GEN-LAST:event_jButton3ActionPerformed
+        salesGUI sales = new salesGUI();
+        sales.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_SalesActionPerformed
     private static final double VAT_RATE = 0.15;
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-                // Customer reciept button:
-        Connection conn = null;
-        Statement stmt = null;
-        double totalPrice = 0.0;
-
-        try {
-            // Connect to database
-            conn = DriverManager.getConnection("jdbc:sqlite:pos.db");
-            stmt = conn.createStatement();
-
-            // Query the database to get order details
-            String query = "SELECT Products.ProductName, OrderDetails.Quantity, OrderDetails.Price, Products.Discount "
-                         + "FROM OrderDetails "
-                         + "JOIN Products ON OrderDetails.ProductID = Products.ProductID "
-                         + "WHERE OrderDetails.OrderID = (SELECT MAX(OrderID) FROM Orders)";  // Assuming you want the last order
-
-            ResultSet rs = stmt.executeQuery(query);
-
-            // Set up Table1 to display item details
-            DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
-            tableModel.setRowCount(0); // Clear existing rows
-
-            // StringBuilder to construct the receipt text
-            StringBuilder receipt = new StringBuilder();
-            receipt.append("Receipt:\n");
-            receipt.append("--------------------------------------------------\n");
-
-            // Iterate through the result set and populate the table and receipt
-            while (rs.next()) {
-                String productName = rs.getString("ProductName");
-                int quantity = rs.getInt("Quantity");
-                double price = rs.getDouble("Price");
-                double discount = rs.getDouble("Discount");
-
-                // Calculate the price after applying discount (if any)
-                double discountAmount = (discount > 0) ? price * (discount / 100) : 0;
-                double finalPrice = price - discountAmount;
-                double totalItemPrice = finalPrice * quantity;
-                totalPrice += totalItemPrice;
-
-                // Append to receipt
-                receipt.append(String.format("%s x%d @ %.2f (Discount: %.2f%%)\n", productName, quantity, price, discount));
-                receipt.append(String.format("Item Total: %.2f\n", totalItemPrice));
-
-                // Add row to table
-                tableModel.addRow(new Object[]{productName, quantity, price, discount});
-            }
-
-            // Append total price and VAT to receipt
-            double vatAmount = totalPrice * VAT_RATE;
-            double totalPriceWithVAT = totalPrice + vatAmount;
-            receipt.append("--------------------------------------------------\n");
-            receipt.append(String.format("Total: %.2f\n", totalPrice));
-            receipt.append(String.format("VAT @ %.2f%%: %.2f\n", VAT_RATE * 100, vatAmount));
-            receipt.append(String.format("Total with VAT: %.2f\n", totalPriceWithVAT));
-
-            // Display receipt in textarea1
-            jTextField1.setText(receipt.toString());
-
-            // Display total price including VAT in textField2
-            jTextField2.setText(String.format("%.2f", totalPriceWithVAT));
-
-            rs.close();
-            stmt.close();
-            conn.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-    }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
-
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:
-        // Total income button:
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:pos.db");
-         Statement stmt = conn.createStatement()) {
-
-        String totalIncomeQuery = "SELECT SUM(TotalAmount) AS TotalIncome FROM Orders";
-        ResultSet rs = stmt.executeQuery(totalIncomeQuery);
-
-        if (rs.next()) {
-            double totalIncome = rs.getDouble("TotalIncome");
-            JOptionPane.showMessageDialog(null, "Total Income: R" + totalIncome);
-        }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-    }//GEN-LAST:event_jButton6ActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        // Exit button:
-        int confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit?", "Exit", JOptionPane.YES_NO_OPTION);
-        if (confirm == JOptionPane.YES_OPTION) {
-            System.exit(0);
-        }
-
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        // TODO add your handling code here:
-        // Card Payment button:
-        double totalAmount = Double.parseDouble(jTextField2.getText());  // Assuming the total price with VAT is in jTextField2
-    String cardNumber = JOptionPane.showInputDialog("Enter Card Number:");
-
-    // Logic to process the card payment could be added here (e.g., through a payment gateway API)
-    JOptionPane.showMessageDialog(null, "Payment of R" + totalAmount + " made via card ending in " + cardNumber.substring(cardNumber.length() - 4));
-
-    }//GEN-LAST:event_jButton7ActionPerformed
-
-    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-        // TODO add your handling code here:
-         // Cash payment button:
-        // Cash Payment button:
-        double totalAmount = Double.parseDouble(jTextField2.getText());
-        double cashReceived = Double.parseDouble(JOptionPane.showInputDialog("Enter Cash Amount:"));
-
-        if (cashReceived >= totalAmount) {
-            double change = cashReceived - totalAmount;
-            JOptionPane.showMessageDialog(null, "Payment successful! Change: R" + change);
-        } else {
-            JOptionPane.showMessageDialog(null, "Insufficient cash. Please enter an amount greater than or equal to the total.");
-        }
-
-    }//GEN-LAST:event_jButton8ActionPerformed
-
     
     /**
      * @param args the command line arguments
@@ -466,18 +428,18 @@ public class SalesGuii extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Sales;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable2;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
