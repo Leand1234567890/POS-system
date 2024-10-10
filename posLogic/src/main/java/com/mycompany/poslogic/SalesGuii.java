@@ -55,17 +55,17 @@ public class SalesGuii extends javax.swing.JFrame {
             stmt.setString(1, barcode);
             ResultSet rs = stmt.executeQuery();
         
-        if (rs.next()){
-            String productName =rs.getString("product_name");
-            double productPrice =rs.getDouble("product_price");
-            DefaultTableModel model = (DefaultTableModel) Main_cart_table.getModel();
-            double total = calculateTotal(); 
-            model.addRow(new Object[]{productName, productPrice});
-            updateTotalTable();
-            
-        }else{
-            JOptionPane.showMessageDialog(this, "Product not found. Please enter manually.");
-            Manual_field.setText("Enter price manually");
+            if (rs.next()){
+                String productName =rs.getString("product_name");
+                double productPrice =rs.getDouble("product_price");
+                DefaultTableModel model = (DefaultTableModel) Main_cart_table.getModel();
+                double total = calculateTotal(); 
+                model.addRow(new Object[]{productName, productPrice});
+                updateTotalTable();
+
+            }else{
+                JOptionPane.showMessageDialog(this, "Product not found. Please enter manually.");
+                Manual_field.setText("Enter price manually");
             }
         }catch(SQLException ex){
             System.out.println("Error 4 SalesGuii");
