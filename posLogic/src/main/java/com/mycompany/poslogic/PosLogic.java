@@ -70,7 +70,7 @@ public class PosLogic {
                 + "ProductID INTEGER NOT NULL, "
                 + "Quantity INTEGER NOT NULL, "
                 + "Price DECIMAL(10, 2) NOT NULL, "
-                + "Discount DECIMAL(5, 2) DEFAULT 0, "  // Added Discount
+                + "Discount DECIMAL(5, 2) DEFAULT 0, "  // Added Discount !!!!
                 + "FOREIGN KEY (OrderID) REFERENCES Orders (OrderID), "
                 + "FOREIGN KEY (ProductID) REFERENCES Products (ProductID)"
                 + ");";
