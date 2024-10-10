@@ -29,7 +29,7 @@ public class SalesGuii extends javax.swing.JFrame {
     public SalesGuii() {
         initComponents();
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        barcode_field.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 barcodeInputAction(evt);
             }
@@ -38,13 +38,13 @@ public class SalesGuii extends javax.swing.JFrame {
     
     //Method to handle barcode entry
     private void barcodeInputAction(java.awt.event.ActionEvent evt){
-        String barcode =jTextField1.getText();
+        String barcode =barcode_field.getText();
         if (barcode.isEmpty()){
             JOptionPane.showMessageDialog(this, "Please enter a barcode.");
             return;
         }
         fetchProductFromDatabase(barcode);
-        jTextField1.setText("");
+        barcode_field.setText("");
     }
 
     //Method to fetch product from databse
@@ -60,14 +60,14 @@ public class SalesGuii extends javax.swing.JFrame {
         if (rs.next()){
             String productName =rs.getString("product_name");
             double productPrice =rs.getDouble("product_price");
-            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            DefaultTableModel model = (DefaultTableModel) Main_cart_table.getModel();
             double total = calculateTotal(); 
             model.addRow(new Object[]{productName, productPrice});
             updateTotalTable();
             
         }else{
             JOptionPane.showMessageDialog(this, "Product not found. Please enter manually.");
-            jTextField2.setText("Enter price manually");
+            Manual_field.setText("Enter price manually");
             }
         }catch(SQLException ex){
             JOptionPane.showMessageDialog(this, "Error accessing database: " + ex.getMessage());
@@ -78,15 +78,15 @@ public class SalesGuii extends javax.swing.JFrame {
     //method to add products manually
     private void addProductsManually(){
     String productName = JOptionPane.showInputDialog("Enter product name:");
-    String productPrice = jTextField2.getText();
+    String productPrice = Manual_field.getText();
     
     if (productName != null && !productPrice.isEmpty()) {
         double productPriceDouble = Double.parseDouble(productPrice); 
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel model = (DefaultTableModel) Main_cart_table.getModel();
         model.addRow(new Object[]{productName, productPriceDouble});
         updateTotalTable();
-        jTextField1.setText("");
-        jTextField2.setText(""); 
+        barcode_field.setText("");
+        Manual_field.setText(""); 
     } else {
         JOptionPane.showMessageDialog(this, "Please enter a valid product name and price.");
     }
@@ -96,7 +96,7 @@ public class SalesGuii extends javax.swing.JFrame {
     //Possible add Discount here
     private double calculateTotal() {
     double total = 0;
-    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+    DefaultTableModel model = (DefaultTableModel) Main_cart_table.getModel();
     
     for (int i = 0; i < model.getRowCount(); i++) {
         Object priceObj = model.getValueAt(i, 1); 
@@ -110,7 +110,7 @@ public class SalesGuii extends javax.swing.JFrame {
     //Method to update total table
     private void updateTotalTable(){
     double total = calculateTotal();
-    DefaultTableModel totalModel = (DefaultTableModel) jTable2.getModel();
+    DefaultTableModel totalModel = (DefaultTableModel) Total_Table.getModel();
     totalModel.setRowCount(0);
     totalModel.addRow(new Object[]{total}); 
     }
@@ -143,35 +143,35 @@ public class SalesGuii extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jButton5 = new javax.swing.JButton();
-        Sales = new javax.swing.JButton();
+        Exit_button = new javax.swing.JButton();
+        Sales_Button = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        Main_cart_table = new javax.swing.JTable();
+        barcode_field = new javax.swing.JTextField();
+        Manual_field = new javax.swing.JTextField();
+        Manual_button = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        Total_Table = new javax.swing.JTable();
+        Clear_Table_button = new javax.swing.JButton();
+        Cash_button = new javax.swing.JButton();
+        Card_button = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(0, 102, 255));
 
-        jButton5.setText("EXIT");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        Exit_button.setText("EXIT");
+        Exit_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+                Exit_buttonActionPerformed(evt);
             }
         });
 
-        Sales.setText("Sales");
-        Sales.addActionListener(new java.awt.event.ActionListener() {
+        Sales_Button.setText("Sales");
+        Sales_Button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SalesActionPerformed(evt);
+                Sales_ButtonActionPerformed(evt);
             }
         });
 
@@ -181,9 +181,9 @@ public class SalesGuii extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(30, 30, 30)
-                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(Exit_button, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(Sales, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(Sales_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(26, 26, 26))
         );
         jPanel1Layout.setVerticalGroup(
@@ -191,15 +191,15 @@ public class SalesGuii extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(35, 35, 35)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton5)
-                    .addComponent(Sales))
+                    .addComponent(Exit_button)
+                    .addComponent(Sales_Button))
                 .addContainerGap(40, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setAutoscrolls(true);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        Main_cart_table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -215,16 +215,16 @@ public class SalesGuii extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(Main_cart_table);
 
-        jButton1.setText("Manual");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        Manual_button.setText("Manual");
+        Manual_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                Manual_buttonActionPerformed(evt);
             }
         });
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        Total_Table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -240,26 +240,26 @@ public class SalesGuii extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(jTable2);
+        jScrollPane2.setViewportView(Total_Table);
 
-        jButton2.setText("Clear all ");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        Clear_Table_button.setText("Clear all ");
+        Clear_Table_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                Clear_Table_buttonActionPerformed(evt);
             }
         });
 
-        jButton3.setText("Cash");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        Cash_button.setText("Cash");
+        Cash_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                Cash_buttonActionPerformed(evt);
             }
         });
 
-        jButton4.setText("Card");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        Card_button.setText("Card");
+        Card_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                Card_buttonActionPerformed(evt);
             }
         });
 
@@ -271,23 +271,23 @@ public class SalesGuii extends javax.swing.JFrame {
                 .addGap(25, 25, 25)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(Cash_button, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(56, 56, 56)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(Card_button, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(Clear_Table_button, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 595, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 384, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 384, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(barcode_field, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 384, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Manual_field, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 384, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(Manual_button, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(156, 156, 156))))))
         );
         jPanel2Layout.setVerticalGroup(
@@ -296,22 +296,22 @@ public class SalesGuii extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(63, 63, 63)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(barcode_field, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(32, 32, 32)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(Manual_field, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(45, 45, 45)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(Manual_button, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(59, 59, 59)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(38, 38, 38)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(Clear_Table_button, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(31, 31, 31)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton4)
-                    .addComponent(jButton3))
+                    .addComponent(Card_button)
+                    .addComponent(Cash_button))
                 .addContainerGap(104, Short.MAX_VALUE))
         );
 
@@ -333,19 +333,19 @@ public class SalesGuii extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void Manual_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Manual_buttonActionPerformed
         // TODO add your handling code here:
         addProductsManually();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_Manual_buttonActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void Clear_Table_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Clear_Table_buttonActionPerformed
         // TODO add your handling code here:
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel model = (DefaultTableModel) Main_cart_table.getModel();
         model.setRowCount(0);
         updateTotalTable();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_Clear_Table_buttonActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void Cash_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Cash_buttonActionPerformed
         // TODO add your handling code here:
         String input = JOptionPane.showInputDialog(null, "Enter amount of cash given:");
         if(input != null && !input.isEmpty())
@@ -359,40 +359,40 @@ public class SalesGuii extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "cahnge: " + change);
                 saveTransactionCash("cash", totalAmount);
             }
-            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-            DefaultTableModel model2 = (DefaultTableModel) jTable2.getModel();
+            DefaultTableModel model = (DefaultTableModel) Main_cart_table.getModel();
+            DefaultTableModel model2 = (DefaultTableModel) Total_Table.getModel();
             model.setRowCount(0);
             model2.setRowCount(0);
             updateTotalTable();
         }catch(NumberFormatException e){
             JOptionPane.showMessageDialog(null,"please enter a valid number");
         }
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_Cash_buttonActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void Card_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Card_buttonActionPerformed
         // TODO add your handling code here:
         double totalAmount = calculateTotal();
         saveTransactionCash("card", totalAmount);
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        DefaultTableModel model2 = (DefaultTableModel) jTable2.getModel();
+        DefaultTableModel model = (DefaultTableModel) Main_cart_table.getModel();
+        DefaultTableModel model2 = (DefaultTableModel) Total_Table.getModel();
         model.setRowCount(0);
         model2.setRowCount(0);
         updateTotalTable();
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_Card_buttonActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+    private void Exit_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Exit_buttonActionPerformed
         // TODO add your handling code here:
         titleForm Title = new titleForm();
         Title.setVisible(true);
         dispose();
-    }//GEN-LAST:event_jButton5ActionPerformed
+    }//GEN-LAST:event_Exit_buttonActionPerformed
 
-    private void SalesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SalesActionPerformed
+    private void Sales_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Sales_ButtonActionPerformed
         // TODO add your handling code here:
         salesGUI sales = new salesGUI();
         sales.setVisible(true);
         dispose();
-    }//GEN-LAST:event_SalesActionPerformed
+    }//GEN-LAST:event_Sales_ButtonActionPerformed
     private static final double VAT_RATE = 0.15;
     
     /**
@@ -431,19 +431,19 @@ public class SalesGuii extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton Sales;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
+    private javax.swing.JButton Card_button;
+    private javax.swing.JButton Cash_button;
+    private javax.swing.JButton Clear_Table_button;
+    private javax.swing.JButton Exit_button;
+    private javax.swing.JTable Main_cart_table;
+    private javax.swing.JButton Manual_button;
+    private javax.swing.JTextField Manual_field;
+    private javax.swing.JButton Sales_Button;
+    private javax.swing.JTable Total_Table;
+    private javax.swing.JTextField barcode_field;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
 }

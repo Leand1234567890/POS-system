@@ -44,7 +44,7 @@ private void retrieveDataFromDatabase() {
     
     // Get the table model
     DefaultTableModel tblModel = new DefaultTableModel(columnNames, 0);
-    jTable1.setModel(tblModel);
+    MainDiplayTable.setModel(tblModel);
 
     // SQLite database connection details
     String url = "jdbc:sqlite:dataBasePos.db"; // Your actual SQLite database path
@@ -82,7 +82,7 @@ private void retrieveCashCreditTotals() {
     // Define column names
     String[] columnNames = {"Date" ,"Cash Total", "Credit Total", "Total amount"};
     DefaultTableModel tblModel = new DefaultTableModel(columnNames, 0);
-    jTable2.setModel(tblModel);
+    TotalsTable.setModel(tblModel);
     
     // SQL query for cash and credit totals
     String query = "SELECT "
@@ -232,27 +232,27 @@ private void exportPaymentData(File directory, String date) {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        ExitButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        MainDiplayTable = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        TotalsTable = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
-        exportFiles = new javax.swing.JButton();
-        clearDataBase = new javax.swing.JButton();
+        Export_And_Sales_button = new javax.swing.JButton();
+        clear_Data_Base_Button = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(0, 102, 255));
 
-        jButton1.setBackground(new java.awt.Color(255, 255, 255));
-        jButton1.setForeground(new java.awt.Color(0, 0, 0));
-        jButton1.setText("EXIT");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        ExitButton.setBackground(new java.awt.Color(255, 255, 255));
+        ExitButton.setForeground(new java.awt.Color(0, 0, 0));
+        ExitButton.setText("EXIT");
+        ExitButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                ExitButtonActionPerformed(evt);
             }
         });
 
@@ -262,14 +262,14 @@ private void exportPaymentData(File directory, String date) {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(35, 35, 35)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(ExitButton, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(1039, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(ExitButton, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(29, Short.MAX_VALUE))
         );
 
@@ -278,10 +278,10 @@ private void exportPaymentData(File directory, String date) {
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jTable1.setBackground(new java.awt.Color(255, 255, 255));
-        jTable1.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        jTable1.setForeground(new java.awt.Color(0, 0, 0));
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        MainDiplayTable.setBackground(new java.awt.Color(255, 255, 255));
+        MainDiplayTable.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        MainDiplayTable.setForeground(new java.awt.Color(0, 0, 0));
+        MainDiplayTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -289,14 +289,14 @@ private void exportPaymentData(File directory, String date) {
 
             }
         ));
-        jTable1.setSelectionBackground(new java.awt.Color(0, 102, 255));
-        jScrollPane1.setViewportView(jTable1);
+        MainDiplayTable.setSelectionBackground(new java.awt.Color(0, 102, 255));
+        jScrollPane1.setViewportView(MainDiplayTable);
 
         jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 60, 810, 340));
 
-        jTable2.setBackground(new java.awt.Color(255, 255, 255));
-        jTable2.setForeground(new java.awt.Color(0, 0, 0));
-        jScrollPane2.setViewportView(jTable2);
+        TotalsTable.setBackground(new java.awt.Color(255, 255, 255));
+        TotalsTable.setForeground(new java.awt.Color(0, 0, 0));
+        jScrollPane2.setViewportView(TotalsTable);
 
         jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 410, 350, 50));
 
@@ -305,24 +305,24 @@ private void exportPaymentData(File directory, String date) {
         jLabel1.setText("Export daily totals and daily sales as file");
         jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 100, -1, -1));
 
-        exportFiles.setText("Export sales and totals");
-        exportFiles.addActionListener(new java.awt.event.ActionListener() {
+        Export_And_Sales_button.setText("Export sales and totals");
+        Export_And_Sales_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportFilesActionPerformed(evt);
+                Export_And_Sales_buttonActionPerformed(evt);
             }
         });
-        jPanel2.add(exportFiles, new org.netbeans.lib.awtextra.AbsoluteConstraints(980, 150, -1, -1));
+        jPanel2.add(Export_And_Sales_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(980, 150, -1, -1));
 
-        clearDataBase.setBackground(new java.awt.Color(0, 102, 255));
-        clearDataBase.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        clearDataBase.setForeground(new java.awt.Color(0, 0, 0));
-        clearDataBase.setText("Clear data base");
-        clearDataBase.addActionListener(new java.awt.event.ActionListener() {
+        clear_Data_Base_Button.setBackground(new java.awt.Color(0, 102, 255));
+        clear_Data_Base_Button.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        clear_Data_Base_Button.setForeground(new java.awt.Color(0, 0, 0));
+        clear_Data_Base_Button.setText("Clear data base");
+        clear_Data_Base_Button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clearDataBaseActionPerformed(evt);
+                clear_Data_Base_ButtonActionPerformed(evt);
             }
         });
-        jPanel2.add(clearDataBase, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 310, -1, -1));
+        jPanel2.add(clear_Data_Base_Button, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 310, -1, -1));
 
         jLabel2.setBackground(new java.awt.Color(51, 102, 255));
         jLabel2.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
@@ -335,19 +335,19 @@ private void exportPaymentData(File directory, String date) {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void ExitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitButtonActionPerformed
         // TODO add your handling code here:
         SalesGuii UserInterface = new SalesGuii();
         UserInterface.setVisible(true);
         dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_ExitButtonActionPerformed
 
-    private void exportFilesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportFilesActionPerformed
+    private void Export_And_Sales_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Export_And_Sales_buttonActionPerformed
         // TODO add your handling code here:
         exportDataToFiles();
-    }//GEN-LAST:event_exportFilesActionPerformed
+    }//GEN-LAST:event_Export_And_Sales_buttonActionPerformed
 
-    private void clearDataBaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearDataBaseActionPerformed
+    private void clear_Data_Base_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clear_Data_Base_ButtonActionPerformed
         // TODO add your handling code here:
         LocalTime currentTime =LocalTime.now();
         LocalTime earlyTime = LocalTime.of(18,0);
@@ -365,7 +365,7 @@ private void exportPaymentData(File directory, String date) {
         retrieveDataFromDatabase();
         retrieveCashCreditTotals();
         
-    }//GEN-LAST:event_clearDataBaseActionPerformed
+    }//GEN-LAST:event_clear_Data_Base_ButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -403,16 +403,16 @@ private void exportPaymentData(File directory, String date) {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton clearDataBase;
-    private javax.swing.JButton exportFiles;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton ExitButton;
+    private javax.swing.JButton Export_And_Sales_button;
+    private javax.swing.JTable MainDiplayTable;
+    private javax.swing.JTable TotalsTable;
+    private javax.swing.JButton clear_Data_Base_Button;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
     // End of variables declaration//GEN-END:variables
 }
