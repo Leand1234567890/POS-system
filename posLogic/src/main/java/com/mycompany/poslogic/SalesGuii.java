@@ -49,10 +49,8 @@ public class SalesGuii extends javax.swing.JFrame {
 
     //Method to fetch product from databse
     private void fetchProductFromDatabase(String barcode){
-        //Need to change the path from static to dynamic
         try(Connection conn = DriverManager.getConnection("jdbc:sqlite:dataBasePos.db")){
-        //try(Connection conn = DriverManager.getConnection("jdbc:sqlite:C:/Users/Leandro/Desktop/POS-system/dataBasePos.db")){
-            String query = "SELECT product_name, product_price FROM products WHERE barcode = ?";
+            String query = "SELECT product_name, product_price FROM products WHERE barcode = ?"; //Set to barcode
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, barcode);
             ResultSet rs = stmt.executeQuery();
@@ -94,7 +92,6 @@ public class SalesGuii extends javax.swing.JFrame {
     }
     
     //Method to calculate the total
-    //Possible add Discount here
     private double calculateTotal() {
     double total = 0;
     DefaultTableModel model = (DefaultTableModel) Main_cart_table.getModel();
@@ -121,7 +118,6 @@ public class SalesGuii extends javax.swing.JFrame {
         String salesSql = "INSERT INTO sales(sales_date, total_amount, payment_method) VALUES(?,?,?)";
         String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
     
-        //Need to change the path from static to dynamic
         try(Connection conn = DriverManager.getConnection("jdbc:sqlite:dataBasePos.db")){
             PreparedStatement stmt = conn.prepareStatement(salesSql);
             stmt.setString(1, currentDate); 
