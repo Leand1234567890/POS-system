@@ -6,7 +6,6 @@ package com.mycompany.poslogic;
 
 import java.io.*;
 import java.sql.*;
-import java.text.*;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -48,7 +47,7 @@ private void retrieveDataFromDatabase() {
     jTable1.setModel(tblModel);
 
     // SQLite database connection details
-    String url = "jdbc:sqlite:C:/Users/Leandro/Desktop/POS-system/dataBasePos.db"; // Your actual SQLite database path
+    String url = "jdbc:sqlite:dataBasePos.db"; // Your actual SQLite database path
     
     String query = "SELECT sales_id, sales_date, total_amount, payment_method FROM sales";
               
@@ -91,7 +90,7 @@ private void retrieveCashCreditTotals() {
                  + "(SELECT SUM(total_amount) FROM sales WHERE payment_method = 'card') AS creditTotal,"
                  + "(SELECT SUM(total_amount) FROM sales) AS totalAmount";
     
-    try (Connection conn = DriverManager.getConnection("jdbc:sqlite:C:/Users/Leandro/Desktop/POS-system/dataBasePos.db");
+    try (Connection conn = DriverManager.getConnection("jdbc:sqlite:dataBasePos.db");
          Statement stmt = conn.createStatement();
          ResultSet rs = stmt.executeQuery(query)) {
 
@@ -135,7 +134,7 @@ private void exportDataToFiles() {
 
 //method for sales data to be exported.
 private void exportSalesData(File directory, String date) {
-    String url = "jdbc:sqlite:C:/Users/Leandro/Desktop/POS-system/dataBasePos.db";
+    String url = "jdbc:sqlite:dataBasePos.db";
     String query = "SELECT "
                  + "(SELECT SUM(total_amount) FROM sales WHERE payment_method = 'cash') AS cashTotal, "
                  + "(SELECT SUM(total_amount) FROM sales WHERE payment_method = 'card') AS creditTotal, "
@@ -171,7 +170,7 @@ private void exportSalesData(File directory, String date) {
     }
 }
 private void exportPaymentData(File directory, String date) {
-    String url = "jdbc:sqlite:C:/Users/Leandro/Desktop/POS-system/dataBasePos.db";
+    String url = "jdbc:sqlite:dataBasePos.db";
     String query = "SELECT sales_id, sales_date, total_amount, payment_method FROM sales";
 
     try (Connection conn = DriverManager.getConnection(url);
@@ -204,7 +203,7 @@ private void exportPaymentData(File directory, String date) {
 
     //Method to delete all the data in sales
     public void deleteSales(){
-        try(Connection conn = DriverManager.getConnection("jdbc:sqlite:C:/Users/Leandro/Desktop/POS-system/dataBasePos.db")){
+        try(Connection conn = DriverManager.getConnection("jdbc:sqlite:dataBasePos.db")){
             String query = "DELETE FROM sales";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.executeUpdate();

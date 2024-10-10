@@ -10,7 +10,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Date;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -51,7 +50,8 @@ public class SalesGuii extends javax.swing.JFrame {
     //Method to fetch product from databse
     private void fetchProductFromDatabase(String barcode){
         //Need to change the path from static to dynamic
-        try(Connection conn = DriverManager.getConnection("jdbc:sqlite:C:/Users/Leandro/Desktop/POS-system/dataBasePos.db")){
+        try(Connection conn = DriverManager.getConnection("jdbc:sqlite:dataBasePos.db")){
+        //try(Connection conn = DriverManager.getConnection("jdbc:sqlite:C:/Users/Leandro/Desktop/POS-system/dataBasePos.db")){
             String query = "SELECT product_name, product_price FROM products WHERE barcode = ?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, barcode);
@@ -121,7 +121,7 @@ public class SalesGuii extends javax.swing.JFrame {
     String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
     
     //Need to change the path from static to dynamic
-    try(Connection conn = DriverManager.getConnection("jdbc:sqlite:C:/Users/Leandro/Desktop/POS-system/dataBasePos.db")){
+    try(Connection conn = DriverManager.getConnection("jdbc:sqlite:dataBasePos.db")){
     PreparedStatement stmt = conn.prepareStatement(salesSql);
     stmt.setString(1, currentDate); 
     stmt.setDouble(2, totalAmount);
