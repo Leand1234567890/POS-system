@@ -70,6 +70,7 @@ public class SalesGuii extends javax.swing.JFrame {
             Manual_field.setText("Enter price manually");
             }
         }catch(SQLException ex){
+            System.out.println("Error 4 SalesGuii");
             JOptionPane.showMessageDialog(this, "Error accessing database: " + ex.getMessage());
             ex.printStackTrace();
         }
@@ -77,19 +78,19 @@ public class SalesGuii extends javax.swing.JFrame {
     
     //method to add products manually
     private void addProductsManually(){
-    String productName = JOptionPane.showInputDialog("Enter product name:");
-    String productPrice = Manual_field.getText();
-    
-    if (productName != null && !productPrice.isEmpty()) {
-        double productPriceDouble = Double.parseDouble(productPrice); 
-        DefaultTableModel model = (DefaultTableModel) Main_cart_table.getModel();
-        model.addRow(new Object[]{productName, productPriceDouble});
-        updateTotalTable();
-        barcode_field.setText("");
-        Manual_field.setText(""); 
-    } else {
-        JOptionPane.showMessageDialog(this, "Please enter a valid product name and price.");
-    }
+        String productName = JOptionPane.showInputDialog("Enter product name:");
+        String productPrice = Manual_field.getText();
+
+        if (productName != null && !productPrice.isEmpty()) {
+            double productPriceDouble = Double.parseDouble(productPrice); 
+            DefaultTableModel model = (DefaultTableModel) Main_cart_table.getModel();
+            model.addRow(new Object[]{productName, productPriceDouble});
+            updateTotalTable();
+            barcode_field.setText("");
+            Manual_field.setText(""); 
+        } else {
+            JOptionPane.showMessageDialog(this, "Please enter a valid product name and price.");
+        }
     }
     
     //Method to calculate the total
@@ -109,29 +110,30 @@ public class SalesGuii extends javax.swing.JFrame {
     
     //Method to update total table
     private void updateTotalTable(){
-    double total = calculateTotal();
-    DefaultTableModel totalModel = (DefaultTableModel) Total_Table.getModel();
-    totalModel.setRowCount(0);
-    totalModel.addRow(new Object[]{total}); 
+        double total = calculateTotal();
+        DefaultTableModel totalModel = (DefaultTableModel) Total_Table.getModel();
+        totalModel.setRowCount(0);
+        totalModel.addRow(new Object[]{total}); 
     }
     
     //Method to save the transactions into the database
     private void saveTransactionCash(String paymentType, double totalAmount){
-    String salesSql = "INSERT INTO sales(sales_date, total_amount, payment_method) VALUES(?,?,?)";
-    String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        String salesSql = "INSERT INTO sales(sales_date, total_amount, payment_method) VALUES(?,?,?)";
+        String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
     
-    //Need to change the path from static to dynamic
-    try(Connection conn = DriverManager.getConnection("jdbc:sqlite:dataBasePos.db")){
-    PreparedStatement stmt = conn.prepareStatement(salesSql);
-    stmt.setString(1, currentDate); 
-    stmt.setDouble(2, totalAmount);
-    stmt.setString(3, paymentType);
-    stmt.executeUpdate();
-    JOptionPane.showMessageDialog(this, "Transaction saved successfully.");
-    }catch(SQLException ex){
-    JOptionPane.showMessageDialog(this, "Error saving transactions" + ex.getMessage());
-     ex.printStackTrace();
-    }
+        //Need to change the path from static to dynamic
+        try(Connection conn = DriverManager.getConnection("jdbc:sqlite:dataBasePos.db")){
+            PreparedStatement stmt = conn.prepareStatement(salesSql);
+            stmt.setString(1, currentDate); 
+            stmt.setDouble(2, totalAmount);
+            stmt.setString(3, paymentType);
+            stmt.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Transaction saved successfully.");
+        }catch(SQLException ex){
+            System.out.println("Error 5 SalesGuii");
+            JOptionPane.showMessageDialog(this, "Error saving transactions" + ex.getMessage());
+            ex.printStackTrace();
+        }
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -365,6 +367,7 @@ public class SalesGuii extends javax.swing.JFrame {
             model2.setRowCount(0);
             updateTotalTable();
         }catch(NumberFormatException e){
+            System.out.println("Error 6 SalesGuii");
             JOptionPane.showMessageDialog(null,"please enter a valid number");
         }
     }//GEN-LAST:event_Cash_buttonActionPerformed

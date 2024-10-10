@@ -72,6 +72,7 @@ private void retrieveDataFromDatabase() {
         }
 
     } catch (SQLException e) {
+        System.out.println("Error 7 salesGUI");
         e.printStackTrace(); // Handle the exception properly (e.g., show an error message)
     }
 }
@@ -106,6 +107,7 @@ private void retrieveCashCreditTotals() {
             tblModel.addRow(rowData);
         }
     } catch (SQLException e) {
+        System.out.println("Error 8 salesGUI");
         e.printStackTrace();
     }
 }
@@ -166,6 +168,7 @@ private void exportSalesData(File directory, String date) {
         JOptionPane.showMessageDialog(null, "Sales data exported successfully to " + directory.getName() +  date + ".txt", 
                                       "Export Successful", JOptionPane.INFORMATION_MESSAGE);
     } catch (SQLException | IOException e) {
+        System.out.println("Error 9 salesGUI");
         e.printStackTrace();
     }
 }
@@ -195,6 +198,7 @@ private void exportPaymentData(File directory, String date) {
         JOptionPane.showMessageDialog(null, "Payment data exported successfully to " + directory.getName() +  date + ".txt", 
                                       "Export Successful", JOptionPane.INFORMATION_MESSAGE);
     } catch (SQLException | IOException e) {
+        System.out.println("Error 10 salesGUI");
         e.printStackTrace();
         JOptionPane.showMessageDialog(null, "SQL Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     } 
@@ -216,6 +220,7 @@ private void exportPaymentData(File directory, String date) {
             resetStmt.close();
             
         }catch(SQLException ex){
+            System.out.println("Error 11 salesGUI");
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error clearing the sales table!", "Error", JOptionPane.ERROR_MESSAGE);
         }  

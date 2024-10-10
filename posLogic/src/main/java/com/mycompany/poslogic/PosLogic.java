@@ -33,6 +33,7 @@ public class PosLogic {
         try {
             conn = DriverManager.getConnection(url);
         } catch (SQLException e) {
+            System.out.println("Error 3 PosLogic");
             System.out.println(e.getMessage());
         }
         return conn;
@@ -103,6 +104,7 @@ public class PosLogic {
             stmt.execute(inventoryTable);
             System.out.println("Tables created successfully.");
         } catch (SQLException e) {
+            System.out.println("Error 2 PosLogic");
             System.out.println(e.getMessage());
         }
     }
