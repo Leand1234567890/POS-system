@@ -11,6 +11,7 @@ import java.sql.SQLException;
  */
 public class PosLogic {
 
+    //GitHub is fun
     public static void main(String[] args) {
         System.out.println("Hello World!");
         
