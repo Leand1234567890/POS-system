@@ -11,6 +11,7 @@ import java.sql.SQLException;
  */
 public class PosLogic {
 
+    //GitHub is fun
     public static void main(String[] args) {
         System.out.println("Hello World!");
         
@@ -33,6 +34,7 @@ public class PosLogic {
         try {
             conn = DriverManager.getConnection(url);
         } catch (SQLException e) {
+            System.out.println("Error 3 PosLogic");
             System.out.println(e.getMessage());
         }
         return conn;
@@ -70,7 +72,7 @@ public class PosLogic {
                 + "ProductID INTEGER NOT NULL, "
                 + "Quantity INTEGER NOT NULL, "
                 + "Price DECIMAL(10, 2) NOT NULL, "
-                + "Discount DECIMAL(5, 2) DEFAULT 0, "  // Added Discount
+                + "Discount DECIMAL(5, 2) DEFAULT 0, "  // Added Discount !!!!
                 + "FOREIGN KEY (OrderID) REFERENCES Orders (OrderID), "
                 + "FOREIGN KEY (ProductID) REFERENCES Products (ProductID)"
                 + ");";
@@ -103,6 +105,7 @@ public class PosLogic {
             stmt.execute(inventoryTable);
             System.out.println("Tables created successfully.");
         } catch (SQLException e) {
+            System.out.println("Error 2 PosLogic");
             System.out.println(e.getMessage());
         }
     }
