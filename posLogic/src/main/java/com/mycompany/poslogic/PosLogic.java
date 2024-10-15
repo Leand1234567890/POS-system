@@ -96,7 +96,7 @@ public class PosLogic {
 
         // Execute table creation
         try (Connection conn = connect();
-             Statement stmt = conn.createStatement()) {
+            Statement stmt = conn.createStatement()) {
             stmt.execute(productsTable);
             stmt.execute(customersTable);
             stmt.execute(ordersTable);
