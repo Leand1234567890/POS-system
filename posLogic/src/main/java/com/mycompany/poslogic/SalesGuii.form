@@ -52,6 +52,8 @@
                   <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
                   <Component id="Exit_button" min="-2" pref="73" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
+                  <Component id="stockBtn" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
                   <Component id="Sales_Button" min="-2" pref="73" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
               </Group>
@@ -64,6 +66,7 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="Exit_button" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="Sales_Button" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="stockBtn" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="40" max="32767" attributes="0"/>
               </Group>
@@ -85,6 +88,14 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="Sales_ButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="stockBtn">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Stock"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="stockBtnActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

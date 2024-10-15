@@ -143,6 +143,7 @@ public class SalesGuii extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         Exit_button = new javax.swing.JButton();
         Sales_Button = new javax.swing.JButton();
+        stockBtn = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         Main_cart_table = new javax.swing.JTable();
@@ -173,6 +174,13 @@ public class SalesGuii extends javax.swing.JFrame {
             }
         });
 
+        stockBtn.setText("Stock");
+        stockBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stockBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -181,6 +189,8 @@ public class SalesGuii extends javax.swing.JFrame {
                 .addGap(30, 30, 30)
                 .addComponent(Exit_button, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(stockBtn)
+                .addGap(31, 31, 31)
                 .addComponent(Sales_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(26, 26, 26))
         );
@@ -190,7 +200,8 @@ public class SalesGuii extends javax.swing.JFrame {
                 .addGap(35, 35, 35)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Exit_button)
-                    .addComponent(Sales_Button))
+                    .addComponent(Sales_Button)
+                    .addComponent(stockBtn))
                 .addContainerGap(40, Short.MAX_VALUE))
         );
 
@@ -392,6 +403,13 @@ public class SalesGuii extends javax.swing.JFrame {
         sales.setVisible(true);
         dispose();
     }//GEN-LAST:event_Sales_ButtonActionPerformed
+
+    private void stockBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stockBtnActionPerformed
+        // TODO add your handling code here:
+        StockGUI stock = new StockGUI();
+        stock.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_stockBtnActionPerformed
     private static final double VAT_RATE = 0.15;
     
     /**
@@ -444,5 +462,6 @@ public class SalesGuii extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JButton stockBtn;
     // End of variables declaration//GEN-END:variables
 }
