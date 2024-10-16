@@ -34,7 +34,7 @@ public class StockGUI extends javax.swing.JFrame {
     //Adding stock
     private void addStock() {
     String barcodeStr = barcodeInput.getText().trim();  // Get barcode input and trim whitespace
-    int barcode;
+    long barcode;
     
     try {
         if (barcodeStr.isEmpty()) {
@@ -47,7 +47,7 @@ public class StockGUI extends javax.swing.JFrame {
             barcodeStr = manualBarcode.trim();
         }
         
-        barcode = Integer.parseInt(barcodeStr);
+        barcode = Long.parseLong(barcodeStr);
     } catch (NumberFormatException e) {
         JOptionPane.showMessageDialog(null, "Invalid barcode format. Please enter a valid integer.");
         return;
@@ -69,7 +69,7 @@ public class StockGUI extends javax.swing.JFrame {
     try (Connection conn = DriverManager.getConnection("jdbc:sqlite:dataBasePos.db")) {
         String sql = "INSERT INTO products (barcode, product_name, product_price) VALUES (?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, barcode);
+            pstmt.setLong(1, barcode);
             pstmt.setString(2, productName.trim());
             pstmt.setDouble(3, Double.parseDouble(productPrice));
             pstmt.executeUpdate();
