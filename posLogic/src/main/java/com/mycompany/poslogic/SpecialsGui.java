@@ -9,6 +9,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -39,11 +41,23 @@ public class SpecialsGui extends javax.swing.JFrame {
                     String productName = rs.getString("product_name");  //Gets the product name from database
                     String barcode = rs.getString("barcode");           //Gets the barcode from database
                     Integer discount = rs.getInt("discount");           //Gets the dicount from the database
-                    model.addRow(new Object[]{productName, barcode, discount});//Sets the values of the table                 
+                    model.addRow(new Object[]{productName, barcode, discount});//Sets the values of the table  
                 }
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage());
+            System.out.println("SpecialsGui Error 1");
+        }
+    }
+    
+    private void UpdateDatabase(String barcode, Integer discount) {
+        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:dataBasePos.db")) { 
+            String sql = "UPDATE products SET discount = " + discount + " WHERE barcode = " + barcode;                      
+            PreparedStatement pstmt = conn.prepareStatement(sql);  
+            pstmt.executeUpdate();         
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage());
+            System.out.println("SpecialsGui Error 1");
         }
     }
     
@@ -75,7 +89,10 @@ public class SpecialsGui extends javax.swing.JFrame {
     private void AddDiscount() {
         try {
             String barcode = GetBarcode();
-            Integer Discount = GetDiscount();    
+            Integer Discount = GetDiscount();  
+            
+            UpdateDatabase(barcode, Discount);
+            retrieveDataFromDatabase();
         } catch (NullPointerException e) {
             System.out.println("Input Cancelled");
         }
@@ -84,6 +101,9 @@ public class SpecialsGui extends javax.swing.JFrame {
     private void RemoveDiscount() {  
         try {
             String barcode = GetBarcode();
+            
+            UpdateDatabase(barcode, 0);
+            retrieveDataFromDatabase();
         } catch (NullPointerException e) {
             System.out.println("Input Cancelled");
         }
