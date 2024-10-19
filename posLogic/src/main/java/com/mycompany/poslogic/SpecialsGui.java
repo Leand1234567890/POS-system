@@ -30,16 +30,16 @@ public class SpecialsGui extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel) MainProductsTable.getModel();
         model.setRowCount(0);
         
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:dataBasePos.db")) {
-            String sql = "SELECT product_name, barcode FROM products";
+        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:dataBasePos.db")) {           
+            String sql = "SELECT product_name, barcode, discount FROM products";
             try (PreparedStatement pstmt = conn.prepareStatement(sql);
                  ResultSet rs = pstmt.executeQuery()) {
 
                 while (rs.next()) {
                     String productName = rs.getString("product_name");  //Gets the product name from database
                     String barcode = rs.getString("barcode");           //Gets the barcode from database
-                    model.addRow(new Object[]{productName, barcode, 0});//Sets the values of the table
-                    //Need to implement discount storage and replace 0 with discount
+                    Integer discount = rs.getInt("discount");           //Gets the dicount from the database
+                    model.addRow(new Object[]{productName, barcode, discount});//Sets the values of the table                 
                 }
             }
         } catch (SQLException e) {
