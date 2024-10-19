@@ -4,6 +4,14 @@
  */
 package com.mycompany.poslogic;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author eugen
@@ -15,7 +23,72 @@ public class SpecialsGui extends javax.swing.JFrame {
      */
     public SpecialsGui() {
         initComponents();
+        retrieveDataFromDatabase();
     }
+    
+    private void retrieveDataFromDatabase() {
+        DefaultTableModel model = (DefaultTableModel) MainProductsTable.getModel();
+        model.setRowCount(0);
+        
+        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:dataBasePos.db")) {
+            String sql = "SELECT product_name, barcode FROM products";
+            try (PreparedStatement pstmt = conn.prepareStatement(sql);
+                 ResultSet rs = pstmt.executeQuery()) {
+
+                while (rs.next()) {
+                    String productName = rs.getString("product_name");  //Gets the product name from database
+                    String barcode = rs.getString("barcode");           //Gets the barcode from database
+                    model.addRow(new Object[]{productName, barcode, 0});//Sets the values of the table
+                    //Need to implement discount storage and replace 0 with discount
+                }
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage());
+        }
+    }
+    
+    private String GetBarcode() {        
+        String barcode = JOptionPane.showInputDialog("Enter product barcode:");       
+        while (barcode.length() == 0) {         //Checks that a value has been entered
+            barcode = JOptionPane.showInputDialog("Invalid barcode enter product barcode:");
+        }         
+        return barcode;
+    }
+    
+    private Integer GetDiscount() {
+        Integer Discount = 0; 
+        Integer Check = 0;
+        String DiscountS = JOptionPane.showInputDialog("Enter discount to apply:");
+        
+        while (Check == 0) { 
+            try {
+                Discount = Integer.valueOf(DiscountS);
+                Check = 1;
+            }
+            catch (NumberFormatException e) {
+                DiscountS = JOptionPane.showInputDialog("Invalid number enter discount to apply:"); 
+            }    
+        } 
+        return Discount;
+    }
+    
+    private void AddDiscount() {
+        try {
+            String barcode = GetBarcode();
+            Integer Discount = GetDiscount();    
+        } catch (NullPointerException e) {
+            System.out.println("Input Cancelled");
+        }
+    }
+    
+    private void RemoveDiscount() {  
+        try {
+            String barcode = GetBarcode();
+        } catch (NullPointerException e) {
+            System.out.println("Input Cancelled");
+        }
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -29,6 +102,8 @@ public class SpecialsGui extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         MainProductsTable = new javax.swing.JTable();
         AddSpecialButton = new javax.swing.JButton();
+        RemoveSpecialButton = new javax.swing.JButton();
+        ExitButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -37,12 +112,31 @@ public class SpecialsGui extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3"
+                "Barcode", "Product Name", "Discount"
             }
         ));
         jScrollPane1.setViewportView(MainProductsTable);
 
         AddSpecialButton.setText("Add Special");
+        AddSpecialButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AddSpecialButtonActionPerformed(evt);
+            }
+        });
+
+        RemoveSpecialButton.setText("Remove Special");
+        RemoveSpecialButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RemoveSpecialButtonActionPerformed(evt);
+            }
+        });
+
+        ExitButton.setText("Exit");
+        ExitButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ExitButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -52,21 +146,47 @@ public class SpecialsGui extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(AddSpecialButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(AddSpecialButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(RemoveSpecialButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(ExitButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(AddSpecialButton)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(AddSpecialButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(RemoveSpecialButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(ExitButton))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void ExitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitButtonActionPerformed
+        // TODO add your handling code here:
+        StockGUI stock = new StockGUI();
+        stock.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_ExitButtonActionPerformed
+
+    private void AddSpecialButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddSpecialButtonActionPerformed
+        // TODO add your handling code here:
+        AddDiscount();
+        
+    }//GEN-LAST:event_AddSpecialButtonActionPerformed
+
+    private void RemoveSpecialButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RemoveSpecialButtonActionPerformed
+        // TODO add your handling code here:
+        RemoveDiscount();
+    }//GEN-LAST:event_RemoveSpecialButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -105,7 +225,9 @@ public class SpecialsGui extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AddSpecialButton;
+    private javax.swing.JButton ExitButton;
     private javax.swing.JTable MainProductsTable;
+    private javax.swing.JButton RemoveSpecialButton;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }
