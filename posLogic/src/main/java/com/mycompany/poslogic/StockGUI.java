@@ -89,14 +89,21 @@ public class StockGUI extends javax.swing.JFrame {
         model.setRowCount(0);
 
         try (Connection conn = DriverManager.getConnection("jdbc:sqlite:dataBasePos.db")) {
-            String sql = "SELECT product_name, barcode, product_price FROM products";
+            String sql = "SELECT product_name, barcode, product_price, discount FROM products";
             try (PreparedStatement pstmt = conn.prepareStatement(sql);
                  ResultSet rs = pstmt.executeQuery()) {
 
                 while (rs.next()) {
                     String productName = rs.getString("product_name");
-                    String barcode = rs.getString("barcode");
+                    String barcode = rs.getString("barcode");                    
                     String productPrice = rs.getString("product_price");
+                    
+                    Double productDiscount = Double.valueOf(rs.getInt("discount"));
+                    if (productDiscount != 0) {
+                        productPrice = String.valueOf(Integer.valueOf(productPrice) * (1 - (productDiscount / 100)) 
+                                + " " + productDiscount + "% Discount");
+                    }
+                    
                     model.addRow(new Object[]{productName, barcode, productPrice});
                 }
             }

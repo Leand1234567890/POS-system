@@ -37,6 +37,7 @@ public class SpecialsGui extends javax.swing.JFrame {
             try (PreparedStatement pstmt = conn.prepareStatement(sql);
                  ResultSet rs = pstmt.executeQuery()) {
 
+                
                 while (rs.next()) {
                     String productName = rs.getString("product_name");  //Gets the product name from database
                     String barcode = rs.getString("barcode");           //Gets the barcode from database
@@ -54,7 +55,8 @@ public class SpecialsGui extends javax.swing.JFrame {
         try (Connection conn = DriverManager.getConnection("jdbc:sqlite:dataBasePos.db")) { 
             String sql = "UPDATE products SET discount = " + discount + " WHERE barcode = " + barcode;                      
             PreparedStatement pstmt = conn.prepareStatement(sql);  
-            pstmt.executeUpdate();         
+            pstmt.executeUpdate();   
+            System.out.println("Database updated");
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage());
             System.out.println("SpecialsGui Error 1");
