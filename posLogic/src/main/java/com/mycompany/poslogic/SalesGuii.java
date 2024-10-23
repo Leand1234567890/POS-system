@@ -50,7 +50,7 @@ public class SalesGuii extends javax.swing.JFrame {
     //Method to fetch product from databse
     private void fetchProductFromDatabase(String barcode){
         try(Connection conn = DriverManager.getConnection("jdbc:sqlite:dataBasePos.db")){
-            String query = "SELECT product_name, product_price FROM products WHERE barcode = ?"; //Set to barcode
+            String query = "SELECT product_name, product_price, discount FROM products WHERE barcode = ?"; //Set to barcode
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, barcode);
             ResultSet rs = stmt.executeQuery();
@@ -58,6 +58,12 @@ public class SalesGuii extends javax.swing.JFrame {
             if (rs.next()){
                 String productName =rs.getString("product_name");
                 double productPrice =rs.getDouble("product_price");
+                
+                Double productDiscount = Double.valueOf(rs.getInt("discount"));
+                    if (productDiscount != 0) {
+                        productPrice = productPrice * (1 - (productDiscount / 100));
+                    }
+                
                 DefaultTableModel model = (DefaultTableModel) Main_cart_table.getModel();
                 double total = calculateTotal(); 
                 model.addRow(new Object[]{productName, productPrice});
