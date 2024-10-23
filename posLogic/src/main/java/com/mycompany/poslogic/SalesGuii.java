@@ -58,6 +58,12 @@ public class SalesGuii extends javax.swing.JFrame {
             if (rs.next()){
                 String productName =rs.getString("product_name");
                 double productPrice =rs.getDouble("product_price");
+                
+                Double productDiscount = Double.valueOf(rs.getInt("discount"));
+                if (productDiscount != 0) {
+                    productPrice = Math.round(productPrice * (1 - (productDiscount / 100)));
+                }
+                
                 DefaultTableModel model = (DefaultTableModel) Main_cart_table.getModel();
                 double total = calculateTotal(); 
                 model.addRow(new Object[]{productName, productPrice});

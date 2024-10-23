@@ -89,7 +89,7 @@ public class StockGUI extends javax.swing.JFrame {
         model.setRowCount(0);
 
         try (Connection conn = DriverManager.getConnection("jdbc:sqlite:dataBasePos.db")) {
-            String sql = "SELECT product_name, barcode, product_price FROM products";
+            String sql = "SELECT product_name, barcode, product_price, discount FROM products";
             try (PreparedStatement pstmt = conn.prepareStatement(sql);
                  ResultSet rs = pstmt.executeQuery()) {
 
@@ -97,6 +97,13 @@ public class StockGUI extends javax.swing.JFrame {
                     String productName = rs.getString("product_name");
                     String barcode = rs.getString("barcode");
                     String productPrice = rs.getString("product_price");
+                    
+                    Double productDiscount = Double.valueOf(rs.getInt("discount"));
+                    if (productDiscount != 0) {
+                        productPrice = String.valueOf(Math.round(Integer.valueOf(productPrice) * (1 - (productDiscount / 100))) 
+                                + " " + productDiscount + "% Discount");
+                    }
+                    
                     model.addRow(new Object[]{productName, barcode, productPrice});
                 }
             }
@@ -217,9 +224,9 @@ public class StockGUI extends javax.swing.JFrame {
         itemStock = new javax.swing.JComboBox<>();
         StockLevels = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
+        SpecialsButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1046, 668));
 
         jPanel1.setBackground(new java.awt.Color(0, 102, 225));
         jPanel1.setToolTipText("");
@@ -324,6 +331,13 @@ public class StockGUI extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(0, 0, 0));
         jLabel4.setText("Items");
 
+        SpecialsButton.setText("Specials");
+        SpecialsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SpecialsButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -342,7 +356,8 @@ public class StockGUI extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(StockLevels, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel4)))
+                        .addComponent(jLabel4))
+                    .addComponent(SpecialsButton))
                 .addContainerGap(44, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -352,7 +367,9 @@ public class StockGUI extends javax.swing.JFrame {
                 .addComponent(addStockBtn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(removeStockBtn)
-                .addGap(52, 52, 52)
+                .addGap(9, 9, 9)
+                .addComponent(SpecialsButton)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(barcodeInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -418,6 +435,13 @@ public class StockGUI extends javax.swing.JFrame {
         updateStockLevels();
     }//GEN-LAST:event_itemStockActionPerformed
 
+    private void SpecialsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SpecialsButtonActionPerformed
+        // TODO add your handling code here:
+        SpecialsGui specials = new SpecialsGui();
+        specials.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_SpecialsButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -455,6 +479,7 @@ public class StockGUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Exit_button;
+    private javax.swing.JButton SpecialsButton;
     private javax.swing.JTextField StockLevels;
     private javax.swing.JButton addStockBtn;
     private javax.swing.JTextField barcodeInput;
