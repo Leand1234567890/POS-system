@@ -219,7 +219,6 @@ public class StockGUI extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1046, 668));
 
         jPanel1.setBackground(new java.awt.Color(0, 102, 225));
         jPanel1.setToolTipText("");
@@ -281,7 +280,7 @@ public class StockGUI extends javax.swing.JFrame {
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, true
+                false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
