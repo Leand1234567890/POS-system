@@ -120,7 +120,6 @@
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="SpecialsButton" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="44" max="32767" attributes="0"/>
               </Group>
@@ -133,9 +132,7 @@
                   <Component id="addStockBtn" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="removeStockBtn" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
-                  <Component id="SpecialsButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
                   <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="barcodeInput" min="-2" max="-2" attributes="0"/>
@@ -293,14 +290,6 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Items"/>
           </Properties>
-        </Component>
-        <Component class="javax.swing.JButton" name="SpecialsButton">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Specials"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="SpecialsButtonActionPerformed"/>
-          </Events>
         </Component>
       </SubComponents>
     </Container>
