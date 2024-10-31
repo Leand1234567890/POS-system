@@ -31,7 +31,7 @@ public class SpecialsGui1 extends javax.swing.JFrame {
         model.setRowCount(0);
         
         try (Connection conn = DriverManager.getConnection("jdbc:sqlite:dabaBasePos.db")) {           
-            String sql = "SELECT product_name, barcode, discount FROM products";
+            String sql = "SELECT product_name, barcode, discount, ItemCountDis FROM products";
             try (PreparedStatement pstmt = conn.prepareStatement(sql);
                  ResultSet rs = pstmt.executeQuery()) {
 
@@ -40,7 +40,8 @@ public class SpecialsGui1 extends javax.swing.JFrame {
                     String productName = rs.getString("product_name");  //Gets the product name from database
                     String barcode = rs.getString("barcode");           //Gets the barcode from database
                     Integer discount = rs.getInt("discount");           //Gets the dicount from the database
-                    model.addRow(new Object[]{productName, barcode, discount});//Sets the values of the table  
+                    String ItemDiscount = rs.getString("ItemCountDis");
+                    model.addRow(new Object[]{productName, barcode, discount, ItemDiscount});//Sets the values of the table  
                 }
             }
         } catch (SQLException e) {
