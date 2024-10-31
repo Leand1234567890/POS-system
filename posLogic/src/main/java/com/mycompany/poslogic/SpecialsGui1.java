@@ -30,7 +30,7 @@ public class SpecialsGui1 extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel) MainProductsTable.getModel();
         model.setRowCount(0);
         
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:dabaBasePos.db")) {           
+        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:dataBasePos.db")) {           
             String sql = "SELECT product_name, barcode, discount, ItemCountDis FROM products";
             try (PreparedStatement pstmt = conn.prepareStatement(sql);
                  ResultSet rs = pstmt.executeQuery()) {
@@ -58,7 +58,20 @@ public class SpecialsGui1 extends javax.swing.JFrame {
             System.out.println("Database updated");
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage());
-            System.out.println("SpecialsGui Error 1");
+            System.out.println("SpecialsGui Error 2");
+        }
+    }
+    
+    private void UpdateItemSpecial(String barcode, Integer discount, Integer ItemCount) {
+        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:dataBasePos.db")) { 
+            String temp = "'" + ItemCount + "," + discount + "'";
+            String sql = "UPDATE products SET ItemCountDis = " + temp + " WHERE barcode = " + barcode;                      
+            PreparedStatement pstmt = conn.prepareStatement(sql);  
+            pstmt.executeUpdate();   
+            System.out.println("Database updated");
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage());
+            System.out.println("SpecialsGui Error 3");
         }
     }
     
@@ -68,6 +81,23 @@ public class SpecialsGui1 extends javax.swing.JFrame {
             barcode = JOptionPane.showInputDialog("Invalid barcode enter product barcode:");
         }         
         return barcode;
+    }
+    
+    private Integer GetItemCount() {
+        Integer ItemCount = 0; 
+        Integer Check = 0;
+        String ItemCountS = JOptionPane.showInputDialog("Enter Item count to apply special to:");
+        
+        while (Check == 0) { 
+            try {
+                ItemCount = Integer.valueOf(ItemCountS);
+                Check = 1;
+            }
+            catch (NumberFormatException e) {
+                ItemCountS = JOptionPane.showInputDialog("Invalid number enter discount to apply:"); 
+            }    
+        } 
+        return ItemCount;
     }
     
     private Integer GetDiscount() {
@@ -87,12 +117,38 @@ public class SpecialsGui1 extends javax.swing.JFrame {
         return Discount;
     }
     
+    private void AddItemCount() {
+        try {
+            String barcode = GetBarcode();
+            Integer ItemCount = GetItemCount();
+            Integer Discount = GetDiscount();  
+            
+            UpdateItemSpecial(barcode, Discount, ItemCount);
+            UpdateDatabase(barcode, 0);
+            retrieveDataFromDatabase();
+        } catch (NullPointerException e) {
+            System.out.println("Input Cancelled");
+        }
+    }
+    
     private void AddDiscount() {
         try {
             String barcode = GetBarcode();
             Integer Discount = GetDiscount();  
             
+            UpdateItemSpecial(barcode, 0, 0);
             UpdateDatabase(barcode, Discount);
+            retrieveDataFromDatabase();
+        } catch (NullPointerException e) {
+            System.out.println("Input Cancelled");
+        }
+    }
+    
+    private void RemoveitemCount() {
+        try {
+            String barcode = GetBarcode();
+            
+            UpdateItemSpecial(barcode, 0, 0);
             retrieveDataFromDatabase();
         } catch (NullPointerException e) {
             System.out.println("Input Cancelled");
@@ -125,6 +181,8 @@ public class SpecialsGui1 extends javax.swing.JFrame {
         ExitButtonActionPerformed = new javax.swing.JButton();
         AddSpecialButtonActionPerformed = new javax.swing.JButton();
         RemoveSpecialButtonActionPerformed = new javax.swing.JButton();
+        AddItemCountButton = new javax.swing.JButton();
+        RemoveItemCountButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -189,18 +247,34 @@ public class SpecialsGui1 extends javax.swing.JFrame {
             }
         });
 
+        AddItemCountButton.setText("Add Item Count");
+        AddItemCountButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AddItemCountButtonActionPerformed(evt);
+            }
+        });
+
+        RemoveItemCountButton.setText("Remove Item Count");
+        RemoveItemCountButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RemoveItemCountButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 463, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(AddSpecialButtonActionPerformed, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(RemoveSpecialButtonActionPerformed, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(107, Short.MAX_VALUE))
+                    .addComponent(RemoveSpecialButtonActionPerformed, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(AddItemCountButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(RemoveItemCountButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -212,8 +286,12 @@ public class SpecialsGui1 extends javax.swing.JFrame {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(AddSpecialButtonActionPerformed)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(RemoveSpecialButtonActionPerformed)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(RemoveSpecialButtonActionPerformed)
+                        .addGap(18, 18, 18)
+                        .addComponent(AddItemCountButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(RemoveItemCountButton)))
                 .addContainerGap(48, Short.MAX_VALUE))
         );
 
@@ -236,6 +314,16 @@ public class SpecialsGui1 extends javax.swing.JFrame {
         // TODO add your handling code here:
         RemoveDiscount();
     }//GEN-LAST:event_RemoveSpecialButtonActionPerformedActionPerformed
+
+    private void AddItemCountButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddItemCountButtonActionPerformed
+        // TODO add your handling code here:
+        AddItemCount();
+    }//GEN-LAST:event_AddItemCountButtonActionPerformed
+
+    private void RemoveItemCountButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RemoveItemCountButtonActionPerformed
+        // TODO add your handling code here:
+        RemoveitemCount();
+    }//GEN-LAST:event_RemoveItemCountButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -273,9 +361,11 @@ public class SpecialsGui1 extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton AddItemCountButton;
     private javax.swing.JButton AddSpecialButtonActionPerformed;
     private javax.swing.JButton ExitButtonActionPerformed;
     private javax.swing.JTable MainProductsTable;
+    private javax.swing.JButton RemoveItemCountButton;
     private javax.swing.JButton RemoveSpecialButtonActionPerformed;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
