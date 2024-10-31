@@ -8,8 +8,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException; 
-
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -17,12 +16,12 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author eugen
  */
-public class SpecialsGui extends javax.swing.JFrame {
+public class SpecialsGui1 extends javax.swing.JFrame {
 
     /**
-     * Creates new form SpecialsGui
+     * Creates new form SpecialsGui1
      */
-    public SpecialsGui() {
+    public SpecialsGui1() {
         initComponents();
         retrieveDataFromDatabase();
     }
@@ -109,7 +108,6 @@ public class SpecialsGui extends javax.swing.JFrame {
             System.out.println("Input Cancelled");
         }
     }
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -122,40 +120,71 @@ public class SpecialsGui extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         MainProductsTable = new javax.swing.JTable();
-        AddSpecialButton = new javax.swing.JButton();
-        RemoveSpecialButton = new javax.swing.JButton();
-        ExitButton = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        ExitButtonActionPerformed = new javax.swing.JButton();
+        AddSpecialButtonActionPerformed = new javax.swing.JButton();
+        RemoveSpecialButtonActionPerformed = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         MainProductsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Barcode", "Product Name", "Discount"
+                "Product Name", "Barcode", "Discount", "Item D"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(MainProductsTable);
 
-        AddSpecialButton.setText("Add Special");
-        AddSpecialButton.addActionListener(new java.awt.event.ActionListener() {
+        jPanel1.setBackground(new java.awt.Color(0, 102, 255));
+
+        ExitButtonActionPerformed.setText("Exit");
+        ExitButtonActionPerformed.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                AddSpecialButtonActionPerformed(evt);
+                ExitButtonActionPerformedActionPerformed(evt);
             }
         });
 
-        RemoveSpecialButton.setText("Remove Special");
-        RemoveSpecialButton.addActionListener(new java.awt.event.ActionListener() {
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(ExitButtonActionPerformed, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addComponent(ExitButtonActionPerformed, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(32, Short.MAX_VALUE))
+        );
+
+        AddSpecialButtonActionPerformed.setText("Add Discount");
+        AddSpecialButtonActionPerformed.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                RemoveSpecialButtonActionPerformed(evt);
+                AddSpecialButtonActionPerformedActionPerformed(evt);
             }
         });
 
-        ExitButton.setText("Exit");
-        ExitButton.addActionListener(new java.awt.event.ActionListener() {
+        RemoveSpecialButtonActionPerformed.setText("Remove Discount");
+        RemoveSpecialButtonActionPerformed.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ExitButtonActionPerformed(evt);
+                RemoveSpecialButtonActionPerformedActionPerformed(evt);
             }
         });
 
@@ -164,50 +193,48 @@ public class SpecialsGui extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(20, 20, 20)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(AddSpecialButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(RemoveSpecialButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(ExitButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(AddSpecialButtonActionPerformed, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(RemoveSpecialButtonActionPerformed, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(107, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(AddSpecialButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(RemoveSpecialButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(ExitButton))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(AddSpecialButtonActionPerformed)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(RemoveSpecialButtonActionPerformed)))
+                .addContainerGap(48, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void ExitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitButtonActionPerformed
+    private void ExitButtonActionPerformedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitButtonActionPerformedActionPerformed
         // TODO add your handling code here:
         StockGUI stock = new StockGUI();
         stock.setVisible(true);
         dispose();
-    }//GEN-LAST:event_ExitButtonActionPerformed
+    }//GEN-LAST:event_ExitButtonActionPerformedActionPerformed
 
-    private void AddSpecialButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddSpecialButtonActionPerformed
+    private void AddSpecialButtonActionPerformedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddSpecialButtonActionPerformedActionPerformed
         // TODO add your handling code here:
         AddDiscount();
-        
-    }//GEN-LAST:event_AddSpecialButtonActionPerformed
+    }//GEN-LAST:event_AddSpecialButtonActionPerformedActionPerformed
 
-    private void RemoveSpecialButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RemoveSpecialButtonActionPerformed
+    private void RemoveSpecialButtonActionPerformedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RemoveSpecialButtonActionPerformedActionPerformed
         // TODO add your handling code here:
         RemoveDiscount();
-    }//GEN-LAST:event_RemoveSpecialButtonActionPerformed
+    }//GEN-LAST:event_RemoveSpecialButtonActionPerformedActionPerformed
 
     /**
      * @param args the command line arguments
@@ -226,29 +253,30 @@ public class SpecialsGui extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SpecialsGui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SpecialsGui1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SpecialsGui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SpecialsGui1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SpecialsGui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SpecialsGui1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(SpecialsGui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SpecialsGui1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new SpecialsGui().setVisible(true);
+                new SpecialsGui1().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton AddSpecialButton;
-    private javax.swing.JButton ExitButton;
+    private javax.swing.JButton AddSpecialButtonActionPerformed;
+    private javax.swing.JButton ExitButtonActionPerformed;
     private javax.swing.JTable MainProductsTable;
-    private javax.swing.JButton RemoveSpecialButton;
+    private javax.swing.JButton RemoveSpecialButtonActionPerformed;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

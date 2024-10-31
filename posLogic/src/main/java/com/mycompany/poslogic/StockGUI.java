@@ -437,7 +437,7 @@ public class StockGUI extends javax.swing.JFrame {
 
     private void SpecialsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SpecialsButtonActionPerformed
         // TODO add your handling code here:
-        SpecialsGui specials = new SpecialsGui();
+        SpecialsGui1 specials = new SpecialsGui1();
         specials.setVisible(true);
         dispose();
     }//GEN-LAST:event_SpecialsButtonActionPerformed
