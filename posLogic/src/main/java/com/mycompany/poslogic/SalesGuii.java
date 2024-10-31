@@ -50,7 +50,7 @@ public class SalesGuii extends javax.swing.JFrame {
     //Method to fetch product from databse
     private void fetchProductFromDatabase(String barcode){
         try(Connection conn = DriverManager.getConnection("jdbc:sqlite:dataBasePos.db")){           
-            String query = "SELECT product_name, product_price, discount, ItemCountDis FROM products WHERE barcode = ?"; //Set to barcode
+            String query = "SELECT product_name, product_price, discount FROM products WHERE barcode = ?"; //Set to barcode
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, barcode);
             ResultSet rs = stmt.executeQuery();                  
@@ -100,17 +100,17 @@ public class SalesGuii extends javax.swing.JFrame {
     
     //Method to calculate the total
     private double calculateTotal() {
-    double total = 0;
-    DefaultTableModel model = (DefaultTableModel) Main_cart_table.getModel();
-    
-    for (int i = 0; i < model.getRowCount(); i++) {
-        Object priceObj = model.getValueAt(i, 1); 
-        if (priceObj != null) {
-            total += Double.parseDouble(priceObj.toString()); 
+        double total = 0;
+        DefaultTableModel model = (DefaultTableModel) Main_cart_table.getModel();
+
+        for (int i = 0; i < model.getRowCount(); i++) {
+            Object priceObj = model.getValueAt(i, 1); 
+            if (priceObj != null) {
+                total += Double.parseDouble(priceObj.toString()); 
+            }
         }
+        return total; 
     }
-    return total; 
-}
     
     //Method to update total table
     private void updateTotalTable(){
