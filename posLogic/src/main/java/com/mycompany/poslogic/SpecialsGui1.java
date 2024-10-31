@@ -41,7 +41,12 @@ public class SpecialsGui1 extends javax.swing.JFrame {
                     String barcode = rs.getString("barcode");           //Gets the barcode from database
                     Integer discount = rs.getInt("discount");           //Gets the dicount from the database
                     String ItemDiscount = rs.getString("ItemCountDis");
-                    model.addRow(new Object[]{productName, barcode, discount, ItemDiscount});//Sets the values of the table  
+                    
+                    
+                    String temp1[] = ItemDiscount.split(",");
+                    String TableOutputText = "Discount: " + temp1[0] + "% Per " + temp1[1] + " products";
+                    
+                    model.addRow(new Object[]{productName, barcode, discount, TableOutputText});//Sets the values of the table  
                 }
             }
         } catch (SQLException e) {
@@ -206,6 +211,9 @@ public class SpecialsGui1 extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(MainProductsTable);
+        if (MainProductsTable.getColumnModel().getColumnCount() > 0) {
+            MainProductsTable.getColumnModel().getColumn(2).setMaxWidth(100);
+        }
 
         jPanel1.setBackground(new java.awt.Color(0, 102, 255));
 
@@ -267,7 +275,7 @@ public class SpecialsGui1 extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 463, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(AddSpecialButtonActionPerformed, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
