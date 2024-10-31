@@ -30,7 +30,7 @@ public class SpecialsGui1 extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel) MainProductsTable.getModel();
         model.setRowCount(0);
         
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:dataBasePos.db")) {           
+        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:dabaBasePos.db")) {           
             String sql = "SELECT product_name, barcode, discount FROM products";
             try (PreparedStatement pstmt = conn.prepareStatement(sql);
                  ResultSet rs = pstmt.executeQuery()) {
